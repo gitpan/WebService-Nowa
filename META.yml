@@ -1,0 +1,28 @@
+---
+abstract: 'Perl interface to the Nowa'
+author:
+  - 'woremacx <woremacx at cpan dot org>'
+distribution_type: module
+generated_by: 'Module::Install version 0.72'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+  version: 1.3
+name: WebService-Nowa
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  Carp: 0
+  Crypt::SSLeay: 0
+  Encode: 0
+  JSON::Syck: 0
+  List::Util: 0
+  Scalar::Util: 0
+  Time::HiRes: 0
+  URI: 0
+  WWW::Mechanize: 0
+  Web::Scraper: 0
+  perl: 5.8.1
+version: 0.01

@@ -1,0 +1,5 @@
+Revision history for Perl extension WebService::Nowa
+
+0.01  Sun May 18 19:14:36 2008
+        - initial version
+        - thanks to mattn and hideden for adding some methods

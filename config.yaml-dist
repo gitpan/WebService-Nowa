@@ -1,0 +1,5 @@
+---
+nowa_id: yourid
+password: yourpass
+api_pass: apipass
+# make your api_pass at http://my.nowa.jp/config/account/api_auth
