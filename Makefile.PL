@@ -11,6 +11,7 @@ requires 'URI';
 requires 'JSON::Syck';
 requires 'WWW::Mechanize';
 requires 'Crypt::SSLeay';
+requires 'Data::Visitor::Encode';
 
 auto_include;
 WriteAll;

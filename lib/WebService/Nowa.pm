@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use 5.8.1;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Encode ();
 use Scalar::Util qw(blessed);
@@ -16,6 +16,7 @@ use URI;
 use JSON::Syck;
 use WWW::Mechanize;
 use Crypt::SSLeay;
+use Data::Visitor::Encode;
 
 use constant NOWA_ROOT         => 'http://nowa.jp/';
 use constant MY_NOWA_ROOT      => 'http://my.nowa.jp/';
@@ -107,6 +108,8 @@ sub channels {
         $name =~ s/\(\d+\)$//;
         $data->{$id} = $name;
     }
+
+    $data = Data::Visitor::Encode->encode_utf8($data) if $self->{encode_utf8};
     return wantarray ? %$data : $data;
 }
 
@@ -144,6 +147,8 @@ sub channel_recent {
             channel => $msg->{channel},
         });
     }
+
+    @data = @{ Data::Visitor::Encode->encode_utf8(\@data) } if $self->{encode_utf8};
     return wantarray ? @data : \@data;
 }
 
@@ -157,6 +162,7 @@ sub _api {
     local $JSON::Syck::ImplicitUnicode = 1;
     my $res = JSON::Syck::Load($content);
     croak "fetch recent failed." if ref($res) eq 'HASH' and $res->{result} eq 'fail';
+
     $res;
 }
 
@@ -182,6 +188,7 @@ sub _internal_api {
     local $JSON::Syck::ImplicitUnicode = 1;
     my $res = JSON::Syck::Load($content);
     croak "fetch internal_api failed." if ref($res) eq 'HASH' and $res->{status} eq 'fail';
+
     $res;
 }
 
@@ -209,6 +216,7 @@ sub recent {
         });
     }
 
+    @data = @{ Data::Visitor::Encode->encode_utf8(\@data) } if $self->{encode_utf8};
     return wantarray ? @data : \@data;
 }
 
@@ -220,6 +228,8 @@ sub update_nanishiteru {
     $self->{mech}->post($uri->as_string, $arg);
     my $res = JSON::Syck::Load($self->{mech}->content);
     croak "fetch recent failed." unless $res->{id} =~ /^\d+_\d+$/;
+
+    $res = Data::Visitor::Encode->encode_utf8($res) if $self->{encode_utf8};
     $res;
 }
 
@@ -231,7 +241,10 @@ sub point {
         process 'dl.point dd', 'point' => sub { 0 + (shift->string_value =~ /^([0-9]+).*/g)[0] }
     };
     my $res = $self->_scrape($s, URI->new(NOWA_HOME));
-    return $res->{point};
+    my $point = $res->{point};
+
+    $point = Data::Visitor::Encode->encode_utf8($point) if $self->{encode_utf8};
+    return $point;
 }
 
 sub add_friend {
@@ -247,8 +260,6 @@ sub delete_friend {
     my $res = $self->_internal_api('./friend/delete', { nowa_id => $target_nowa_id });
     return $res->{status} eq 'success';
 }
-
-
 
 1;
 
@@ -280,7 +291,11 @@ Nowa is the community service run by L<http://www.livedoor.com/> in Japan. See L
 
 =head2 new
 
-constructor
+constructor.
+
+require nowa_id, password and api_pass.
+
+encode_utf8 is optional, when you want to get result encode_utf8ed.
 
 =head2 channels
 
@@ -336,6 +351,7 @@ it under the same terms as Perl itself.
 =head1 SEE ALSO
 
 L<http://nowa.jp/>,
-L<http://wiki.livedoor.jp/nowa_staff/d/nowa%20%A5%CA%A5%CB%A5%B7%A5%C6%A5%EBAPI%BB%C5%CD%CD>
+L<http://wiki.livedoor.jp/nowa_staff/d/nowa%20%A5%CA%A5%CB%A5%B7%A5%C6%A5%EBAPI%BB%C5%CD%CD>,
+L<Data::Visitor::Encode>
 
 =cut

@@ -16,6 +16,7 @@ no_index:
 requires:
   Carp: 0
   Crypt::SSLeay: 0
+  Data::Visitor::Encode: 0
   Encode: 0
   JSON::Syck: 0
   List::Util: 0
@@ -25,4 +26,4 @@ requires:
   WWW::Mechanize: 0
   Web::Scraper: 0
   perl: 5.8.1
-version: 0.01
+version: 0.02
